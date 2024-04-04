@@ -4,17 +4,18 @@ This Rust library permits to execute programs without replying on `fork`. This c
 
 ## Usage
 
-Use macro `srpc!` to send requests to the spawn server. This is a synchronous call. For asynchronous calls, use macro `arpc!`.
+Use macro `srpc!` to send requests to the spawn server. This is a synchronous call. For asynchronous calls, use macro `arpc!`. Import these macros in your Rust program as follows:
 
-Add the following to your `Cargo.toml` file:
+```rust
+use spawn_server::{arpc, srpc};
+```
+
+Also, add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-spawn_server = { version="*" }
-
+spawn_server = { version="*", git = "https://github.com/scontain/spawn_server.git" }
 ```
-
-- ..
 
 ## Deployment
 
@@ -23,4 +24,3 @@ You should run the spawn server in the same container as the program that uses t
 ## Build
 
 Just execute `cargo build --release` to build the spawn server. 
-

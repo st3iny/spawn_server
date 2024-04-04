@@ -6,7 +6,7 @@ use spawn_server::{Command, CommandResponse};
 #[post("/command")]
 async fn info(command: Json<Command>) -> impl Responder {
     let (code, stdout, stderr) = sh!("{}", command.command);
-    let response = CommandResponse { code: code, stdout: stdout, stderr: stderr };
+    let response = CommandResponse { code, stdout, stderr };
     HttpResponse::Ok().json(response)
 }
 
