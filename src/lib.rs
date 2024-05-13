@@ -22,10 +22,10 @@ pub fn sync_remote_execute(cmd: &str) -> (i32, String, String) {
     };
 
     use std::time::Duration;
-    let two_minutes = Duration::new(2 * 60, 0);
+    let very_long_timeout = Duration::new(60 * 60 * 24, 0); // 24h
 
     let client = reqwest::blocking::Client::builder()
-        .timeout(two_minutes)
+        .timeout(very_long_timeout)
         .build()
         .unwrap(); // todo: remove unwrap
 
@@ -45,13 +45,13 @@ pub fn sync_remote_execute(cmd: &str) -> (i32, String, String) {
         }
         Err(e) => {
             eprintln!(
-                "sync_remote_execute API response cannot be parsed! {} (ERROR 67132-2323-78123)",
+                "sync_remote_execute API response cannot be parsed! {} (ERROR 67132-2323-78223)",
                 e
             );
             (
                 -1,
                 "".to_string(),
-                "RPC Error  (ERROR 67132-2323-78123)".to_string(),
+                "RPC Error  (ERROR 67132-2323-78224)".to_string(),
             )
         }
     }
@@ -66,10 +66,10 @@ pub async fn remote_execute(cmd: &str) -> (i32, String, String) {
     };
 
     use std::time::Duration;
-    let two_minutes = Duration::new(2 * 60, 0);
+    let very_long_timeout = Duration::new(60 * 60 * 24, 0);
 
     let client = reqwest::Client::builder()
-        .timeout(two_minutes)
+        .timeout(very_long_timeout)
         .build()
         .unwrap(); // todo: remove unwrap
 
@@ -95,7 +95,7 @@ pub async fn remote_execute(cmd: &str) -> (i32, String, String) {
             (
                 -1,
                 "".to_string(),
-                "RPC Error  (ERROR 67132-2323-78123)".to_string(),
+                "RPC Error  (ERROR 67132-2323-78124)".to_string(),
             )
         }
     }
