@@ -79,7 +79,7 @@ pub async fn remote_execute(cmd: &str) -> (i32, String, String) {
                 let result: CommandResponse = resp.json().await.unwrap();
                 (result.code, result.stdout, result.stderr)
             } else {
-                eprintln!("sync_remote_execute API: return status indicates no success (ERROR 8192-173-10620)");
+                eprintln!("async_remote_execute API: return status indicates no success (ERROR 8192-173-10620)");
                 (
                     -2,
                     "".to_string(),
@@ -89,7 +89,7 @@ pub async fn remote_execute(cmd: &str) -> (i32, String, String) {
         }
         Err(e) => {
             eprintln!(
-                "sync_remote_execute API response cannot be parsed! {} (ERROR 67132-2323-78123)",
+                "async_remote_execute API response cannot be parsed! {} (ERROR 67132-2323-78123)",
                 e
             );
             (
