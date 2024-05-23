@@ -1,12 +1,27 @@
-use actix_web::{post, App, HttpResponse, HttpServer, Responder, web::Json};
 use actix_web::get;
+use actix_web::{post, web::Json, App, HttpResponse, HttpServer, Responder};
 use shells::sh;
 use spawn_server::{Command, CommandResponse};
+use tokio::task;
 
 #[post("/command")]
 async fn info(command: Json<Command>) -> impl Responder {
-    let (code, stdout, stderr) = sh!("{}", command.command);
-    let response = CommandResponse { code, stdout, stderr };
+    let cmd = command.command.clone();
+    let response = if let Ok((code, stdout, stderr)) =
+        task::spawn_blocking(move || sh!("{}", command.command)).await
+    {
+        CommandResponse {
+            code,
+            stdout,
+            stderr,
+        }
+    } else {
+        CommandResponse {
+            code: 100,
+            stdout: format!("spawn_server: command '{cmd}' failed (ERROR 128912-12128-18492)"),
+            stderr: "(ERROR 128912-12128-18493)".to_string(),
+        }
+    };
     HttpResponse::Ok().json(response)
 }
 
@@ -15,16 +30,23 @@ async fn index() -> impl Responder {
     HttpResponse::Ok().body(r#"{"server": "spawn_server", "version": "0.1.0"}"#)
 }
 
-#[actix_rt::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .service(index)
-            .service(info)
+fn main() {
+    let _ = actix_web::rt::System::with_tokio_rt(|| {
+        tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .worker_threads(4)
+            .thread_name("main-tokio")
+            .build()
+            .unwrap()
     })
-    .workers(4)
-    .bind("127.0.0.1:8099")?
-    .run()
-    .await?;
+    .block_on(async_main());
+}
+
+async fn async_main() -> std::io::Result<()> {
+    HttpServer::new(|| App::new().service(index).service(info))
+        .workers(4)
+        .bind("127.0.0.1:8099")?
+        .run()
+        .await?;
     Ok(())
 }

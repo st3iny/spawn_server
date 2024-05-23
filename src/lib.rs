@@ -57,7 +57,6 @@ pub fn sync_remote_execute(cmd: &str) -> (i32, String, String) {
     }
 }
 
-
 //  async_version
 
 pub async fn remote_execute(cmd: &str) -> (i32, String, String) {
@@ -101,7 +100,6 @@ pub async fn remote_execute(cmd: &str) -> (i32, String, String) {
     }
 }
 
-
 /// Macro to execute the given command on the spawn server using synchronous communcation
 
 #[macro_export]
@@ -110,7 +108,6 @@ macro_rules! srpc {
         $crate::sync_remote_execute(&format!($( $cmd )*))
     }};
 }
-
 
 /// Macro to execute the given command on the spawn server using asynchronous communcation
 
