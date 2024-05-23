@@ -22,6 +22,7 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .service(info)
     })
+    .workers(4)
     .bind("127.0.0.1:8099")?
     .run()
     .await?;
