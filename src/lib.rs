@@ -117,3 +117,11 @@ macro_rules! arpc {
         $crate::remote_execute(&format!($( $cmd )*))
     }};
 }
+
+
+#[macro_export]
+macro_rules! sh {
+    ( $( $cmd:tt )* ) => {{
+        $crate::sync_remote_execute(&format!($( $cmd )*))
+    }};
+}
