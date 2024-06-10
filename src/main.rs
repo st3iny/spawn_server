@@ -34,7 +34,7 @@ fn main() {
     let _ = actix_web::rt::System::with_tokio_rt(|| {
         tokio::runtime::Builder::new_multi_thread()
             .enable_all()
-            .worker_threads(4)
+            .worker_threads(16)
             .thread_name("main-tokio")
             .build()
             .unwrap()
@@ -44,7 +44,7 @@ fn main() {
 
 async fn async_main() -> std::io::Result<()> {
     HttpServer::new(|| App::new().service(index).service(info))
-        .workers(4)
+        .workers(16)
         .bind("127.0.0.1:8099")?
         .run()
         .await?;
