@@ -7,5 +7,7 @@ fn main() {
     let (code, stdout, stderr) = srpc!("ls -lrt");
     println!("Blocking:\n - code={code}\n - stdout={stdout}\n - stderr={stderr}");
     let (code, stdout, stderr) = sh!("ls -la");
-    println!("Async:\n - code={code}\n - stdout={stdout}\n - stderr={stderr}");
+    println!("Blocking:\n - code={code}\n - stdout={stdout}\n - stderr={stderr}");
+    let (code, stdout, stderr) = sh!("ls -la > ls.log");
+    println!("Blocking and redirected:\n - code={code}\n - stdout={stdout}\n - stderr={stderr}");
 }
