@@ -10,12 +10,16 @@ async fn info(command: Json<Command>) -> impl Responder {
     let response = if let Ok((code, stdout, stderr)) =
         task::spawn_blocking(move || sh!("{}", command.command)).await
     {
+        if code != 0 {
+            eprintln!("{cmd} failed: stdout='{stdout}', stderr='{stderr}'");
+        }
         CommandResponse {
             code,
             stdout,
             stderr,
         }
     } else {
+        eprintln!("{cmd}: failed to spawn command.");
         CommandResponse {
             code: 100,
             stdout: format!("spawn_server: command '{cmd}' failed (ERROR 128912-12128-18492)"),
