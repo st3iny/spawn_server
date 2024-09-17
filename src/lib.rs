@@ -1,5 +1,10 @@
 use serde_derive::{Deserialize, Serialize};
 
+pub mod spawn;
+
+use spawn::spawn_client;
+use spawn::spawn_server;
+
 #[derive(Debug, Serialize, Deserialize, Default)]
 pub struct Command {
     pub command: String,
@@ -117,7 +122,6 @@ macro_rules! arpc {
         $crate::remote_execute(&format!($( $cmd )*))
     }};
 }
-
 
 #[macro_export]
 macro_rules! sh {
