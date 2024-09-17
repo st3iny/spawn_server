@@ -4,6 +4,8 @@ use shells::sh;
 use spawn_server::{Command, CommandResponse};
 use tokio::task;
 
+mod posix_spawn;
+
 #[post("/command")]
 async fn info(command: Json<Command>) -> impl Responder {
     let cmd = command.command.clone();

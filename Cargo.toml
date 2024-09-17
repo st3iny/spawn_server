@@ -1,16 +1,6 @@
-[package]
-name = "spawn_server"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = ["spawn_server", "process_spawner", "target_process"]
+resolver = "2"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-actix-web = "*"
-serde = "*"
-actix-rt = "*"
-serde_derive = "*"
-serde_json = "*"
-shells = "*"
-reqwest = { version = "*", features = ["native-tls", "json", "blocking"] }
-tokio = { version = "*", features = ["full"] }
