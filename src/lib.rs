@@ -13,7 +13,7 @@ pub struct CommandResponse {
 }
 
 fn get_spawner_url() -> String {
-    "http://localhost:8099/command".to_string()
+    "http://127.0.0.1:8099/command".to_string()
 }
 
 pub fn sync_remote_execute(cmd: &str) -> (i32, String, String) {
