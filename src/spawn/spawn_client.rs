@@ -6,6 +6,7 @@ use super::ApiPosixSpawnArgs;
 const SPAWN_SERVER_HARDCODED_URL: &str = "http://localhost:8099/posix_spawn";
 
 pub async fn request_posix_spawn(
+    server_url: String,
     // filename (search in path -> posix_spawnp) or path (posix_spawn)
     executable: String,
     // file_actions -> see `posix_spawn(2)`
@@ -35,7 +36,9 @@ pub async fn request_posix_spawn(
     };
 
     let client = reqwest::Client::new();
-    let res = client.post(SPAWN_SERVER_HARDCODED_URL)
+    let res = client
+        //.post(SPAWN_SERVER_HARDCODED_URL)
+        .post(format!("{server_url}/posix_spawn"))
         .json(&api_spawn_args)
         .send()
         .await

@@ -184,15 +184,13 @@ extern "C" fn target_process(arg: *mut c_void) -> libc::c_int {
 
     // unsafe { libc::execvpe(executable, ptr_array, envp.as_ptr()) };
     let spawn_func = if use_path {
-        libc::posix_spawn
-    } else {
         libc::posix_spawnp
+    } else {
+        libc::posix_spawn
     };
 
     
-    if unsafe { spawn_func(
-        pid, executable, file_actions_p, spawn_attrs, argv, envp
-    ) } < 0 {
+    if unsafe { spawn_func(pid, executable, file_actions_p, spawn_attrs, argv, envp) } != 0 {
         panic!("posix_spawn: {}", std::io::Error::last_os_error())
     };
 
@@ -246,12 +244,29 @@ fn exec_posix_spawn(spawn_args: ApiPosixSpawnArgs) -> (libc::pid_t, libc::pid_t)
     let file_actions =  unsafe { std::mem::transmute::<[u8; 80], libc::posix_spawn_file_actions_t>(file_actions) };
     let spawn_attrs = unsafe { std::mem::transmute::<[u8; 336], libc::posix_spawnattr_t>(spawnattr_t) };
 
+    // Drop owned CStrings *after* forking to prevent accessing freed data in the child
+    // TODO: probaly not unwrap here (will fail if string contains null bytes)
+    let argv_cstrings: Vec<CString> = argv
+        .into_iter()
+        .map(|arg| CString::new(arg).unwrap())
+        .collect();
+    let envp_cstrings: Vec<CString> = envp
+        .into_iter()
+        .map(|arg| CString::new(arg).unwrap())
+        .collect();
+
     // Correctly allocate and populate argv
-    let mut argv: Vec<*mut c_char> = argv.iter().map(|arg| arg.as_ptr() as *mut c_char).collect();
+    let mut argv: Vec<*mut c_char> = argv_cstrings
+        .iter()
+        .map(|arg| arg.as_ptr() as *mut c_char)
+        .collect();
     argv.push(std::ptr::null_mut());
 
     // Correctly allocate and populate envp
-    let mut envp: Vec<*mut c_char> = envp.iter().map(|var| var.as_ptr() as *mut c_char).collect();
+    let mut envp: Vec<*mut c_char> = envp_cstrings
+        .iter()
+        .map(|var| var.as_ptr() as *mut c_char)
+        .collect();
     envp.push(std::ptr::null_mut());
 
     if unsafe {
